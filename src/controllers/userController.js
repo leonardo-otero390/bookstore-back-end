@@ -15,6 +15,7 @@ export default async function createUser(req, res) {
 
     newUser.hashedPassword = bcrypt.hashSync(newUser.password, 10);
     delete newUser.password;
+    newUser.purchases = [];
 
     await usersCollection.insertOne(newUser);
 
