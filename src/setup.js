@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 
-let envFile = '.env.test';
+let envFile = '.env.dev';
 
 if (process.env.NODE_ENV === 'prod') envFile = '.env';
 
