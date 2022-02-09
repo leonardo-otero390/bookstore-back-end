@@ -1,11 +1,11 @@
-import logInSchema from '../schemas/logInSchema.js';
+import userSchema from '../schemas/userSchema.js';
 
-export function userSchemaValidation(req, res, next) {
-  const logIn = req.body;
-
-  const result = logInSchema.validate(logIn);
-  if (result.error) {
-    return res.sendStatus(400);
+export default function userSchemaValidation(req, res, next) {
+  const validation = userSchema.validate(req.body);
+  if (validation.error) {
+    return res
+      .status(400)
+      .send('Todos os campos devem ser devidamente preenchidos');
   }
 
   return next();
