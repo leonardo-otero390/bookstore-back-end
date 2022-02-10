@@ -8,5 +8,6 @@ const routes = Router();
 routes.use(validateToken);
 routes.post('/', cartValidations.insertBody, cartsController.insert);
 routes.put('/', cartValidations.updateBody, cartsController.update);
+routes.get('/:cartId', cartsController.findById)
 
 export default routes;

@@ -51,3 +51,24 @@ export async function update(req, res) {
     return res.sendStatus(500);
   }
 }
+
+export async function findById(req, res) {
+  const { cartId } = req.params;
+  const { userId } = res.locals;
+  try {
+    const cart = await db
+      .collection('carts')
+      .findOne(
+        { _id: new ObjectId(cartId), userId },
+        { projection: { userId: 0 } }
+      );
+    if (!cart)
+      return res
+        .status(404)
+        .send("The isn't a cart with this Id or you are not authorized");
+    return res.send(cart);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+}
