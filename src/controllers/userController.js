@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 
 import db from '../database/connection.js';
 
-export default async function createUser(req, res) {
+export async function createUser(req, res) {
   const newUser = req.body;
 
   try {
