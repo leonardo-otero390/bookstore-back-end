@@ -18,12 +18,14 @@ export async function upsert(req, res) {
         { $set: { token, userId: user._id } },
         { upsert: true }
       );
-    return res.status(200).send({ token, name: user.hashedPassword });
+    
+    return res.status(200).send({ token, name: user.name });
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
   }
 }
+
 export async function remove(req, res) {
   const userId = new ObjectId(res.locals.userId);
   try {
