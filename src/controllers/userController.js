@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import dayjs from 'dayjs';
+import { ObjectId } from 'mongodb';
 
 import db from '../database/connection.js';
 
@@ -29,21 +30,22 @@ export async function createUser(req, res) {
   }
 }
 
-function valueOfItems(items) {
-  let value = 0.0;
-
-  items.forEach((item) => {
-    value += item.quantityInCart * item.price;
-  });
-
-  return value;
-}
-
 export async function registerPurchase(req, res) {
-  console.log(req.body);
+  const newPurchase = req.body;
+  const paymentWay = newPurchase.paymentWay;
 
-  const newPurchase = {};
-  newPurchase.items = req.body;
+  if (
+    paymentWay !== 'credit card' &&
+    paymentWay !== 'billet' &&
+    paymentWay !== 'pix'
+  ) {
+    res
+      .status(400)
+      .send(
+        'Os dados dos itens da compra apresentam algum problema.\nNão foi possível finalizá-la'
+      );
+    return;
+  }
 
   try {
     const { userId } = res.locals;
@@ -52,20 +54,46 @@ export async function registerPurchase(req, res) {
 
     const user = await usersCollection.findOne({ _id: userId });
 
-    newPurchase.value = valueOfItems(newPurchase.items);
+    if (!user) {
+      res.status(401).send('Você não é mais um usuário cadastrado');
+      return;
+    }
+
+    const productsCollection = db.collection('products');
+
+    // The stock must be checked before any change in the DB
+    let value = 0.0;
+    for (let i = 0; i < newPurchase.items.length; i = +1) {
+      const item = newPurchase.items[i];
+
+      const product = await productsCollection.findOne({
+        _id: new ObjectId(item._id),
+      });
+
+      if (product.quantity < item.quantity) {
+        res
+          .status(409)
+          .send(
+            'O estoque disponível não foi suficiente para finalizar a compra'
+          );
+        return;
+      }
+
+      value += item.quantity * product.price;
+    }
+
+    newPurchase.value = value;
     newPurchase.date = dayjs().format('DD/MM/YYYY');
 
     const updatedPurchases = user.purchases;
     updatedPurchases.push(newPurchase);
 
-    const productsCollection = db.collection('products');
-
     for (let i = 0; i < newPurchase.items.length; i += 1) {
       const item = newPurchase.items[i];
 
       await productsCollection.updateOne(
-        { title: item.title },
-        { $inc: { quantity: -item.quantityInCart } }
+        { _id: new ObjectId(item._id) },
+        { $inc: { quantity: -item.quantity } }
       );
     }
 
