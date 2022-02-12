@@ -1,11 +1,34 @@
 export const books = [
   {
-    title: 'Nárnia',
-    author: 'C.S Lewis',
+    title: 'As Crônicas de Nárnia',
+    author: 'C. S. Lewis',
     image: 'https://images-na.ssl-images-amazon.com/images/I/71yJLhQekBL.jpg',
     price: 23.9,
     quantity: 10,
   },
+  {
+    title: 'As Aventuras de Tom Sawyer',
+    author: 'Mark Twain',
+    image: 'https://images-na.ssl-images-amazon.com/images/I/91-YOzmFRhL.jpg',
+    price: 31.54,
+    quantity: 40,
+  },
+  {
+    title: 'Da obrigação moral de ser cético',
+    author: 'Thomas Sowell',
+    image:
+      'https://http2.mlstatic.com/D_NQ_NP_995003-MLB45188385148_032021-O.jpg',
+    price: 25.75,
+    quantity: 25,
+  },
+  {
+    title: 'Eu, Robô',
+    author: 'Isaac Asimov',
+    image: 'https://blog.estantevirtual.com.br/wp-content/uploads/eu-robo1.jpg',
+    price: 29.95,
+    quantity: 50,
+  },
+
   {
     title: 'Scott Pilgrim',
     author: 'Canadian Guy',
