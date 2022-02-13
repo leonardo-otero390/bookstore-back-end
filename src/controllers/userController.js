@@ -63,7 +63,7 @@ export async function registerPurchase(req, res) {
 
     // The stock must be checked before any change in the DB
     let value = 0.0;
-    for (let i = 0; i < newPurchase.items.length; i = +1) {
+    for (let i = 0; i < newPurchase.items.length; i += 1) {
       const item = newPurchase.items[i];
 
       const product = await productsCollection.findOne({
