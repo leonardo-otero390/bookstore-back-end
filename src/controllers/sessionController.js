@@ -1,5 +1,4 @@
 import bcrypt from 'bcrypt';
-import { ObjectId } from 'mongodb';
 import { v4 as uuid } from 'uuid';
 import db from '../database/connection.js';
 
@@ -18,7 +17,7 @@ export async function upsert(req, res) {
         { $set: { token, userId: user._id } },
         { upsert: true }
       );
-    
+
     return res.status(200).send({ token, name: user.name });
   } catch (error) {
     console.log(error);
@@ -27,7 +26,7 @@ export async function upsert(req, res) {
 }
 
 export async function remove(req, res) {
-  const userId = new ObjectId(res.locals.userId);
+  const { userId } = res.locals;
   try {
     await db.collection('sessions').deleteMany({ userId });
     return res.sendStatus(200);
