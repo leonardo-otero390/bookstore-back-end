@@ -20,6 +20,7 @@
   },
   "homepage": "",
   "dependencies": {
+    "@sendgrid/mail": "^7.6.1",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dayjs": "^1.10.7",

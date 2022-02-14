@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { ObjectId } from 'mongodb';
 
 import db from '../database/connection.js';
+import { send } from '../services/emailService.js';
 
 export async function createUser(req, res) {
   const newUser = req.body;
@@ -32,7 +33,7 @@ export async function createUser(req, res) {
 
 export async function registerPurchase(req, res) {
   const newPurchase = req.body;
-  const paymentWay = newPurchase.paymentWay;
+  const { paymentWay } = newPurchase;
 
   if (
     paymentWay !== 'credit card' &&
@@ -63,6 +64,7 @@ export async function registerPurchase(req, res) {
 
     // The stock must be checked before any change in the DB
     let value = 0.0;
+    let emailMessage = 'Você comprou os seguintes itens:<br /><br />';
     for (let i = 0; i < newPurchase.items.length; i += 1) {
       const item = newPurchase.items[i];
 
@@ -80,6 +82,7 @@ export async function registerPurchase(req, res) {
       }
 
       value += item.quantity * product.price;
+      emailMessage += ` - ${item.quantity} un. de '${product.title}'<br />`;
     }
 
     newPurchase.value = value;
@@ -101,6 +104,13 @@ export async function registerPurchase(req, res) {
       { _id: userId },
       { $set: { purchases: updatedPurchases } }
     );
+
+    emailMessage += `<br />Pelo valor de R$ ${value.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+
+    await send({ email: user.email, content: emailMessage });
 
     res.sendStatus(201);
   } catch (error) {
