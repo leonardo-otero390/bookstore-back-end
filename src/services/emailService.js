@@ -8,7 +8,7 @@ export async function send({ email, content }) {
     from: 'leonardo.otero390@gmail.com',
     subject: 'Sua compra na bookstore foi efetuada',
     text: content,
-    html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+    html: `<strong>${content}</strong>`,
   };
   try {
     await sgMail.send(msg);
